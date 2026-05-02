@@ -187,6 +187,16 @@ public class TweakerMoreConfigs
 	)
 	public static final TweakerMoreConfigBooleanHotkeyed AUTO_VILLAGER_TRADE_FAVORITES = newConfigBooleanHotkeyed("autoVillagerTradeFavorites");
 
+	@Config(
+			type = Config.Type.GENERIC,
+			restriction = @Restriction(require = {
+					@Condition(ModIds.itemscroller),
+					@Condition(value = ModIds.minecraft, versionPredicates = ">=1.16")
+			}),
+			category = Config.Category.FEATURES
+	)
+	public static final TweakerMoreConfigBoolean AUTO_VILLAGER_TRADE_FAVORITES_DROP_OUTPUT = newConfigBoolean("autoVillagerTradeFavoritesDropOutput", false);
+
 	@Config(type = Config.Type.TWEAK, category = Config.Category.FEATURES)
 	public static final TweakerMoreConfigBooleanHotkeyed AUTO_RESPAWN = newConfigBooleanHotkeyed("autoRespawn");
 

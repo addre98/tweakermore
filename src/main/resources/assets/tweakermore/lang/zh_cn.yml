@@ -87,6 +87,12 @@ tweakermore:
         在打开村民交易GUI时自动触发ItemScroller模组的villagerTradeFavorites功能
         然后关闭村民交易GUI
       pretty_name: 自动交易收藏村民交易
+    autoVillagerTradeFavoritesDropOutput:
+      .: 丢出交易产物
+      comment: |-
+        当启用时，在@option#autoVillagerTradeFavorites@交易完成后，
+        将交易获得的新物品从背包中丢出
+      pretty_name: 丢出交易产物
     autoRespawn:
       .: 自动重生
       comment: 自动在死亡界面的@tr#deathScreen.spectate@/@tr#deathScreen.respawn@按钮变为可用时进行重生
