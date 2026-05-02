@@ -67,27 +67,17 @@ public class MerchantAutoFavoritesTrader
 	//$$ 	MerchantScreen merchantScreen = (MerchantScreen) screen;
 	//$$ 	it.unimi.dsi.fastutil.ints.IntList originalFavorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(container).favorites();
 	//$$
-	//$$ 	MerchantOffers visibleList = container.getOffers();
-	//$$ 	List<Integer> visibleFavorites = new ArrayList<>();
-	//$$ 	for (int visibleIndex = 0; visibleIndex < visibleList.size(); visibleIndex++)
+	//$$ 	if (dropOutput)
 	//$$ 	{
-	//$$ 		int realIndex = VillagerUtils.getRealTradeIndexFor(visibleIndex, container);
-	//$$ 		if (realIndex != -1 && originalFavorites.contains(realIndex))
+	//$$ 		it.unimi.dsi.fastutil.ints.IntList favoriteRealIndices = new it.unimi.dsi.fastutil.ints.IntArrayList(originalFavorites);
+	//$$ 		for (int realIndex : favoriteRealIndices)
 	//$$ 		{
-	//$$ 			visibleFavorites.add(visibleIndex);
+	//$$ 			tradeAndDropOutput(merchantScreen, realIndex);
 	//$$ 		}
 	//$$ 	}
-	//$$
-	//$$ 	for (int visibleIndex : visibleFavorites)
+	//$$ 	else
 	//$$ 	{
-	//$$ 		if (dropOutput)
-	//$$ 		{
-	//$$ 			tradeAndDropOutput(merchantScreen, visibleIndex);
-	//$$ 		}
-	//$$ 		else
-	//$$ 		{
-	//$$ 			InventoryUtils.villagerTradeEverythingPossibleWithTrade(visibleIndex);
-	//$$ 		}
+	//$$ 		InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
 	//$$ 	}
 	//$$ 	InventoryUtils.villagerClearTradeInputSlots();
 	//$$ 	InfoUtils.printActionbarMessage("tweakermore.impl.autoVillagerTradeFavorites.triggered", config.getPrettyName(), screen.getTitle());
@@ -106,7 +96,20 @@ public class MerchantAutoFavoritesTrader
 	}
 
 	//#if MC >= 12111
-	//$$ private static void tradeAndDropOutput(MerchantScreen merchantScreen, int visibleIndex)
+	//$$ private static int getVisibleIndex(MerchantMenu container, int realIndex)
+	//$$ {
+	//$$ 	MerchantOffers visibleList = container.getOffers();
+	//$$ 	for (int i = 0; i < visibleList.size(); i++)
+	//$$ 	{
+	//$$ 		if (VillagerUtils.getRealTradeIndexFor(i, container) == realIndex)
+	//$$ 		{
+	//$$ 			return i;
+	//$$ 		}
+	//$$ 	}
+	//$$ 	return -1;
+	//$$ }
+	//$$
+	//$$ private static void tradeAndDropOutput(MerchantScreen merchantScreen, int realIndex)
 	//$$ {
 	//$$ 	MerchantMenu handler = merchantScreen.getMenu();
 	//$$ 	try
@@ -115,9 +118,13 @@ public class MerchantAutoFavoritesTrader
 	//$$ 	}
 	//$$ 	catch (Exception ignored) { return; }
 	//$$
+	//$$ 	int visibleIndex = getVisibleIndex(handler, realIndex);
+	//$$ 	if (visibleIndex == -1) return;
 	//$$ 	ItemStack sellItem = handler.getOffers().get(visibleIndex).getResult().copy();
 	//$$ 	while (true)
 	//$$ 	{
+	//$$ 		visibleIndex = getVisibleIndex(handler, realIndex);
+	//$$ 		if (visibleIndex == -1) break;
 	//$$ 		VillagerUtils.switchToTradeByVisibleIndex(visibleIndex);
 	//$$ 		if (InventoryUtils.areStacksEqual(sellItem, handler.getSlot(2).getItem()) == false)
 	//$$ 			break;
