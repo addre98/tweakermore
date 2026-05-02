@@ -23,17 +23,21 @@ package me.fallenbreath.tweakermore.impl.features.autoVillagerTradeFavorites;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import me.fallenbreath.tweakermore.config.TweakerMoreConfigs;
+import me.fallenbreath.tweakermore.config.options.TweakerMoreConfigBoolean;
 import me.fallenbreath.tweakermore.config.options.TweakerMoreConfigBooleanHotkeyed;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
 import java.util.Objects;
 
 //#if MC >= 11600
 //$$ import fi.dy.masa.itemscroller.villager.VillagerDataStorage;
 //$$ import fi.dy.masa.malilib.util.InfoUtils;
+//$$ import fi.dy.masa.itemscroller.villager.VillagerUtils;
 //#endif
 
 public class MerchantAutoFavoritesTrader
@@ -58,7 +62,26 @@ public class MerchantAutoFavoritesTrader
 				//$$ 		//#endif
 				//$$ )
 				//$$ {
-				//$$ 	InventoryUtils.villagerTradeEverythingPossibleWithAllFavoritedTrades();
+				//$$ 	TweakerMoreConfigBoolean dropOutputConfig = TweakerMoreConfigs.AUTO_VILLAGER_TRADE_FAVORITES_DROP_OUTPUT;
+				//$$ 	boolean dropOutput = dropOutputConfig.getBooleanValue();
+				//$$ 	MerchantScreen merchantScreen = (MerchantScreen) screen;
+				//$$ 	//#if MC >= 12111
+				//$$ 	//$$ it.unimi.dsi.fastutil.ints.IntList favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(container).favorites();
+				//$$ 	//#else
+				//$$ 	List<Integer> favorites = VillagerDataStorage.getInstance().getFavoritesForCurrentVillager(container).favorites;
+				//$$ 	//#endif
+				//$$ 	for (int tradeIndex : favorites)
+				//$$ 	{
+				//$$ 		if (dropOutput)
+				//$$ 		{
+				//$$ 			tradeAndDropOutput(merchantScreen, tradeIndex);
+				//$$ 		}
+				//$$ 		else
+				//$$ 		{
+				//$$ 			InventoryUtils.villagerTradeEverythingPossibleWithTrade(tradeIndex);
+				//$$ 		}
+				//$$ 	}
+				//$$ 	InventoryUtils.villagerClearTradeInputSlots();
 				//$$ 	InfoUtils.printActionbarMessage("tweakermore.impl.autoVillagerTradeFavorites.triggered", config.getPrettyName(), screen.getTitle());
 				//$$ }
 				//$$ else
@@ -73,4 +96,28 @@ public class MerchantAutoFavoritesTrader
 			}
 		}
 	}
+
+	//#if MC >= 11600
+	//$$ private static void tradeAndDropOutput(MerchantScreen merchantScreen, int visibleIndex)
+	//$$ {
+	//$$ 	MerchantMenu handler = merchantScreen.getMenu();
+	//$$ 	try
+	//$$ 	{
+	//$$ 		if (handler.getOffers().isEmpty()) return;
+	//$$ 	}
+	//$$ 	catch (Exception ignored) { return; }
+	//$$
+	//$$ 	ItemStack sellItem = handler.getOffers().get(visibleIndex).getResult().copy();
+	//$$ 	while (true)
+	//$$ 	{
+	//$$ 		VillagerUtils.switchToTradeByVisibleIndex(visibleIndex);
+	//$$ 		if (InventoryUtils.areStacksEqual(sellItem, handler.getSlot(2).getItem()) == false)
+	//$$ 			break;
+	//$$ 		InventoryUtils.dropStack(merchantScreen, 2);
+	//$$ 		if (handler.getSlot(2).hasItem())
+	//$$ 			break;
+	//$$ 	}
+	//$$ }
+	//#endif
 }
+
